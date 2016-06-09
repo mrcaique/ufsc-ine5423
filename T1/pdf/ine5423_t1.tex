@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % inclusão de figuras
+\graphicspath{ {imgs/} } % local padrão das imagens usadas neste documento
+\usepackage{fancyvrb} % Inclusão de comandos na área de verbatim
+\usepackage{caption} % Permite a remoção do label "Figura 1"
+\usepackage[brazil]{babel} % Texto em português do Brasil
+\usepackage[a4paper, left=20mm, right=20mm, top=20mm, bottom=20mm]{geometry} % Formatação da página
+
+\title{\textbf{INE5423 - Banco de Dados I (UFSC - 2016/1)}}
+\author{
+    Caique Rodrigues Marques \\
+    {\texttt{c.r.marques@grad.ufsc.br}}
+    \and
+    Lucas Ribeiro Neis \\
+    {\texttt{lucasneis@hotmail.com.br}}
+    \vspace{-5mm}
+}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Questão 1}
+    \begin{figure*}[h!]
+        \centering
+        \includegraphics[scale=0.6]{ine5423_diagram1.png}
+        \caption*{\textit{A herança definida em "Avaliação" é total e exclusiva}}
+        %\label{fig:my_label}
+    \end{figure*}
+    
+\section*{Questão 2}
+    \begin{Verbatim}[commandchars=+\[\]]
+    Prova(+underline[número], nome, +underline[Ncartão], nota, data)
+        Ncartão referencia Aluno(Ncartao)
+    Trabalho(+underline[número], nome, tipo_entrega)
+    Grupo(+underline[numero], nome)
+    Aluno(+underline[nCartao], nome, sexo)
+    T_G(+underline[nGrupo], +underline[nTrab], de, ate, nota)
+        nGrupo referencia Grupo(nGrupo)
+        nTrab referencia Trabalho(nTrab)
+    G_A(+underline[nAluno], +underline[nGrupo])
+        nAluno referencia Aluno(nAluno)
+        nGrupo referencia Grupo(nGrupo)
+    \end{Verbatim}
+\end{document}

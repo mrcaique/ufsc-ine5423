@@ -34,10 +34,10 @@
     \begin{Verbatim}[commandchars=+\[\]]
     Prova(+underline[número], nome, +underline[Ncartão], nota, data)
         Ncartão referencia Aluno(Ncartão)
-    Trabalho(+underline[número], nome, tipo_entrega)
+    Trabalho(+underline[número], nome, tipo_entrega, de, até)
     Grupo(+underline[número], nome)
     Aluno(+underline[nCartão], nome, sexo)
-    T_G(+underline[nGrupo], +underline[nTrab], de, até, nota)
+    T_G(+underline[nGrupo], +underline[nTrab], nota)
         nGrupo referencia Grupo(nGrupo)
         nTrab referencia Trabalho(nTrab)
     G_A(+underline[nAluno], +underline[nGrupo])

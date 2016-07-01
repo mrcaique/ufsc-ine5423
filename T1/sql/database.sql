@@ -1,5 +1,3 @@
-#!/usr/bin/sql
-
 --------------------------
 -- 	Questão 3 	--
 --------------------------
@@ -10,14 +8,6 @@ CREATE TABLE curso (
     codcurso INTEGER NOT NULL,
     nomecurso VARCHAR(50),
     PRIMARY KEY(codcurso)
-);
-
--- Tabela com emails alternativos das pessoas.
-CREATE TABLE outroemail (
-    numerocartao INTEGER NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    PRIMARY KEY(numerocartao, email),
-    FOREIGN KEY(numerocartao) REFERENCES pessoa(numerocartao)
 );
 
 -- Tabela de pessoas (alunos e servidores) com número de cartão,
@@ -33,6 +23,14 @@ CREATE TABLE pessoa (
     FOREIGN KEY(codcurso) REFERENCES curso(codcurso)
 );
 
+-- Tabela com emails alternativos das pessoas.
+CREATE TABLE outroemail (
+    numerocartao INTEGER NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    PRIMARY KEY(numerocartao, email),
+    FOREIGN KEY(numerocartao) REFERENCES pessoa(numerocartao)
+);
+
 -- Tabela com os projetos em andamento e concluídos. Quando
 -- um projeto é continuação de outro, a coluna 'CodProjAnte'
 -- informa o projeto anterior ao projeto em questão.
@@ -44,7 +42,7 @@ CREATE TABLE projeto (
     anofim CHAR(4),
     codprojante INTEGER,
     PRIMARY KEY(codproj),
-    FOREIGN KEY(codprojante) REFERENCES projeto(codprojante)
+    FOREIGN KEY(codprojante) REFERENCES projeto(codproj)
 );
 
 -- Tabela que víncula projetos a pessoas. O papel da pessoa pode
@@ -53,7 +51,7 @@ CREATE TABLE projetopessoa (
     codproj INTEGER NOT NULL,
     numerocartao INTEGER NOT NULL,
     papelpessproj CHAR(8) 
-        CHECK (papelpessproj IN ('Lider', 'Membro', 'Bolsita')),
+        CHECK (papelpessproj IN ('Lider', 'Membro', 'Bolsista')),
     PRIMARY KEY(codproj, numerocartao),
     FOREIGN KEY(codproj) REFERENCES projeto(codproj),
     FOREIGN KEY(numerocartao) REFERENCES pessoa(numerocartao)

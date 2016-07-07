@@ -24,8 +24,8 @@ WHERE P.EMailPref LIKE '%@uni%' AND (C.NomeCurso = 'Computação' OR P.Sexo = 'F
 --relacionamento n_n do modelo conceitual. A clausula SELECT deve possuir pelo menos um atributo de cada uma
 --das tabelas relacionadas. A cláusula WHERE deve possuir pelo menos três filtros. A consulta deve ser feita
 --com operador de JOIN e possuir alguma função de agregação.
-	--Nome das pessoas, nome dos projetos e papel das pessoas no projeto onde o projeto tenha mais de um envolvido, seja uma continuação de um projeto anterior e
-	--tenha sido iniciado após 2000
+	--Nome das pessoas, nome dos projetos e papel das pessoas no projeto onde o projeto tenha mais de um 
+	--envolvido, seja uma continuação de um projeto anterior e tenha sido iniciado após 2000
 SELECT PPP.NomePess, PPP.NomeProj, PPP.PapelPessProj
 FROM (Pessoa NATURAL JOIN (
 		Projeto NATURAL JOIN ProjetoPessoa

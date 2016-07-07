@@ -17,7 +17,7 @@ WHERE Pessoa.EMailPref LIKE '%@uni%' AND (Curso.NomeCurso = 'Computação' OR Pe
 
 	--(b) com operador de produto cartesiano
 SELECT C.CodCurso, NomeCurso, NomePess, EMailPref
-FROM (SELECT NomePess, EMailPref, Sexo, CodCurso FROM Pessoa) as P, (SELECT CodCurso, NomeCurso FROM Curso) as C
+FROM (SELECT NomePess, EMailPref, Sexo, CodCurso FROM Pessoa) AS P, (SELECT CodCurso, NomeCurso FROM Curso) AS C
 WHERE P.EMailPref LIKE '%@uni%' AND (C.NomeCurso = 'Computação' OR P.Sexo = 'F') AND P.CodCurso = C.CodCurso;
 
 --III. Crie uma consulta que acesse três tabelas, sendo que uma delas deve ter sido criada por causa de um
@@ -25,11 +25,20 @@ WHERE P.EMailPref LIKE '%@uni%' AND (C.NomeCurso = 'Computação' OR P.Sexo = 'F
 --das tabelas relacionadas. A cláusula WHERE deve possuir pelo menos três filtros. A consulta deve ser feita
 --com operador de JOIN e possuir alguma função de agregação.
 	--Nome das pessoas, nome dos projetos, papel das pessoas no projeto e o número de pessoas envolvidas no
-	--projeto cujo a pessoa não seja um professor, o código seja consequência de um anterior e tenha iniciado pós-2000.
-SELECT Pessoa.NomePess, PP.NomeProj, PP.PapelPessProj, count(Pessoa.CodCurso)
-FROM Pessoa NATURAL JOIN (ProjetoPessoa NATURAL JOIN Projeto) as PP
-WHERE /*Pessoa.CodCurso IS NOT NULL */ Pessoa.sexo = 'M' AND PP.CodProjAnte IS NOT NULL AND PP.AnoInicio > '2000'
-GROUP BY Pessoa.NomePess, PP.NomeProj, PP.PapelPessProj;
+	--projeto onde o projeto tenha mais de um envolvido, seja uma continuação de um projeto anterior e
+	--tenha sido iniciado após 2000
+SELECT PPP.NomePess, PPP.NomeProj, PPP.PapelPessProj, GP.count
+FROM (Pessoa NATURAL JOIN (
+		Projeto NATURAL JOIN ProjetoPessoa
+		) AS PP
+	) AS PPP NATURAL JOIN (
+		SELECT P.CodProj, count(NumeroCartao) AS count
+		FROM Pessoa NATURAL JOIN (
+				Projeto NATURAL JOIN ProjetoPessoa
+				) AS P
+		GROUP BY P.CodProj
+	) AS GP
+WHERE GP.count > 1 AND PPP.CodProjAnte IS NOT NULL AND AnoInicio > '2000';
 
 --IV. Crie uma consulta que acesse três tabelas selecionando dois atributos quaisquer e usando a função COUNT().
 --Utilize o ORDER BY e GROUP BY. A clausula WHERE deve possuir pelo menos dois filtros.

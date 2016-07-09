@@ -1,16 +1,24 @@
-\documentclass{article}
+\documentclass[fleqn]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx} % inclusão de figuras
 \graphicspath{ {imgs/} } % local padrão das imagens usadas neste documento
 \usepackage{fancyvrb} % Inclusão de comandos na área de verbatim
 \usepackage{caption} % Permite a remoção do label "Figura 1"
 \usepackage[brazil]{babel} % Texto em português do Brasil
-\usepackage[a4paper, left=20mm, right=20mm, top=20mm, bottom=20mm]{geometry} % Formatação da página
+\usepackage[a4paper, left=20mm, right=20mm, top=20mm, bottom=20mm]{geometry}
+% Formatação da página
+\usepackage{amsmath} % Símbolos matemáticos
+\usepackage{enumerate} % Lista com índice em números romanos
+\usepackage{listings} % Bloco lstlisting
+\usepackage[colorlinks, urlcolor=blue, citecolor=red]{hyperref}
+% Uso de hyperlinks
 
 \title{\textbf{INE5423 - Banco de Dados I (UFSC - 2016/1)}}
 \author{
     Caique Rodrigues Marques \\
     {\texttt{c.r.marques@grad.ufsc.br}}
+    \thanks{Todos os códigos relacionados a este projeto podem ser encontrados
+    \href{https://github.com/mrcaique/ufsc-ine5423}{neste repositório}.}
     \and
     Lucas Ribeiro Neis \\
     {\texttt{lucasneis@hotmail.com.br}}
@@ -33,15 +41,98 @@
 \section*{Questão 2}
     \begin{Verbatim}[commandchars=+\[\]]
     Prova(+underline[número], +underline[Ncartão], nome, nota, data)
-        Ncartão referencia Aluno(Ncartão)
+        Ncartão referencia Aluno(nCartão)
     Trabalho(+underline[número], nome, tipo_entrega, de, até)
     Grupo(+underline[número], nome)
     Aluno(+underline[nCartão], nome, sexo)
     T_G(+underline[nGrupo], +underline[nTrab], nota)
-        nGrupo referencia Grupo(nGrupo)
-        nTrab referencia Trabalho(nTrab)
+        nGrupo referencia Grupo(número)
+        nTrab referencia Trabalho(número)
     G_A(+underline[nAluno], +underline[nGrupo])
-        nAluno referencia Aluno(nAluno)
-        nGrupo referencia Grupo(nGrupo)
+        nAluno referencia Aluno(nCartão)
+        nGrupo referencia Grupo(número)
     \end{Verbatim}
+
+\newpage
+\section*{Questão 4}
+    \begin{enumerate}[I] % Enumerar usando números romanos
+        \item Nome do Projeto e Ano de término dos projetos que são
+        sequencia de outros e que começaram entre 2000 e 2010.
+            \begin{lstlisting}[mathescape]
+    $\pi$<NomeProj, AnoFim>(
+        $\sigma$<CodProjAnt != NULL $\land$
+            AnoInicio $\leq$ '2000' $\land$
+            AnoInicio $\geq$ '2010'>(Projeto)
+    )
+            \end{lstlisting}
+        
+        \item Código e nome do curso, nome e email das pessoas onde a pessoa tem
+        email \texttt{@uni} e o nome do curso que ela cursa é Computação ou a
+        pessoa é do sexo Feminino
+        \begin{enumerate}[(a)] % Listar usando letras minúsculas
+            \item Com operador JOIN.
+                \begin{lstlisting}[mathescape]
+    $\pi$<CodCurso, NomeCurso, NomePess, EmailPref>(
+        $\sigma$<Pessoa.EmailPref LIKE '%@uni%' $\land$(
+            Curso.NomeCurso = 'Computacao' $\lor$
+            Pessoa.Sexo = 'F')>(
+                Pessoa $\bowtie$ Curso
+            )
+        )
+    )
+                \end{lstlisting}
+
+            \item Com operador de produto cartesiano.
+                \begin{lstlisting}[mathescape]
+    $\pi$<CodCurso, NomeCurso, NomePess, EmailPref>(
+        $\sigma$<Pessoa.EmailPref LIKE '%@uni%' $\land$
+            (
+                Curso.NomeCurso = 'Computacao' $\lor$
+                Pessoa.Sexo = 'F'
+            ) $\land$ Pessoa.CodCurso = Curso.CodCurso>
+            (
+                ($\pi$<NomePess, EMailPref, Sexo, CodCurso>(Pessoa)) $\times$
+                ($\pi$<CodCurso, NomeCurso>(Curso))
+            )
+    )
+                \end{lstlisting}
+        \end{enumerate}
+        
+        \item Nome das pessoas, nome dos projetos, papel das pessoas no projeto
+        e o número de pessoas envolvidas no projeto onde o projeto tenha mais
+        de um envolvido, seja uma continuação de um projeto anterior e tenha
+        sido iniciado após 2000.
+            \begin{lstlisting}[mathescape]
+    $\pi$<Pessoa.NomePess, Projeto.NomeProj, ProjetoPessoa.PapelPessProj>(
+        $\sigma$<count > 1 $\land$ ProjetoPessoa.CodProjAnte != NULL $\land$ AnoInicio > '2000'>
+        (Pessoa $\bowtie$ (Projeto $\bowtie$ ProjetoPessoa)) $\bowtie$ (    
+            $\pi$<Projeto.CodProj, $\rho$<G(count(NumeroCartao))/count>(Pessoa)>(
+                Pessoa $\bowtie$ (Projeto $\bowtie$ ProjetoPessoa)
+            )
+        )
+    )
+            \end{lstlisting}
+        
+        \item Nome das mulheres e seus respectivos cursos onde ela tem um email
+        alternativo hospedado fora de \texttt{@uni} e o número de email
+        alternativos respeitando a cláusula.
+            \begin{lstlisting}[mathescape]
+    $\pi$<Pessoa.NomePess, Curso.NomeCurso, G(count(CodCurso))>(
+        $\sigma$<Pessoa.sexo = 'F' $\land$ Email NOT LIKE '%@uni%'>(
+            Curso $\bowtie$ (Pessoa $\bowtie$ OutroEmail)
+        )
+    )
+            \end{lstlisting}
+    
+    \newpage
+        \item O numero do cartão, nome da pessoa e número de projetos dos ALUNOS
+        que LIDERAM dois ou mais projetos
+            \begin{lstlisting}[mathescape]
+    $\pi$<Pessoa.NumeroCartao, Pessoa.NomePess, G(count(numeroCartao))>(
+        $\sigma$<PapelPessProj = 'Lider' $\land$ Curso != NULL>(
+            Curso $\bowtie$ (Pessoa $\bowtie$ ProjetoPessoa)
+        )
+    )
+            \end{lstlisting}
+    \end{enumerate}
 \end{document}
